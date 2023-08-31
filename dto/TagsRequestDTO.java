@@ -1,10 +1,9 @@
 package com.mjc.school.service.dto;
-
-public class AuthorRequestDTO {
+public class TagsRequestDTO {
     private Long id;
     private String name;
 
-    public AuthorRequestDTO(Long id, String name) {
+    public TagsRequestDTO(Long id, String name) {
     }
 
     public Long getId() {

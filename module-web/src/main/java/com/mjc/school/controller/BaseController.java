@@ -1,19 +1,18 @@
 package com.mjc.school.controller;
 
-import com.mjc.school.service.exceptions.NotFoundException;
-import com.mjc.school.service.exceptions.ValidatorException;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface BaseController<T, R, K> {
 
-    List<R> readAll();
+    ResponseEntity<List<R>> readAll(int page, int limit, String sortBy);
 
-    R readById(K id) throws NotFoundException;
+    ResponseEntity<R> readById(K id);
 
-    R create(T createRequest) throws ValidatorException, NotFoundException;
+    ResponseEntity<R> create(T createRequest);
 
-    R update(T updateRequest) throws ValidatorException, NotFoundException;
+    ResponseEntity<R> update(K id, T updateRequest);
 
-    boolean deleteById(K id) throws NotFoundException;
+    void deleteById(K id);
 }

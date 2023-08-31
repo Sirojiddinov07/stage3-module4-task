@@ -1,47 +1,95 @@
 package com.mjc.school.controller.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.service.dto.TagsRequestDTO;
-import com.mjc.school.service.dto.TagsResponseDTO;
-import com.mjc.school.service.exceptions.NotFoundException;
-import com.mjc.school.service.exceptions.ValidatorException;
+import com.mjc.school.service.TagService;
+import com.mjc.school.service.dto.TagRequestDTO;
+import com.mjc.school.service.dto.TagResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-public class TagController implements BaseController<TagsRequestDTO, TagsResponseDTO, Long> {
+@RestController
+@RequestMapping("/tags")
+public class TagController implements BaseController<TagRequestDTO, TagResponseDTO, Long> {
 
-    private final BaseService<TagsRequestDTO, TagsResponseDTO, Long> service;
+    private final TagService service;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public TagController(BaseService<TagsRequestDTO, TagsResponseDTO, Long> service) {
+    public TagController(TagService service) {
         this.service = service;
     }
 
     @Override
-    public List<TagsResponseDTO> readAll() {
-        return service.readAll();
+    @GetMapping()
+    public ResponseEntity<List<TagResponseDTO>> readAll(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "limit", required = false, defaultValue = "5") int limit,
+            @RequestParam(value = "sort_by", required = false, defaultValue = "name") String sortBy)
+    {
+        List<TagResponseDTO> tags = service.readAll(page, limit, sortBy);
+        return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
     @Override
-    public TagsResponseDTO readById(Long id) throws NotFoundException {
-        return service.readById(id);
+    @GetMapping("/{id:\\d+}")
+    public ResponseEntity<TagResponseDTO> readById(@PathVariable("id") Long id) {
+        TagResponseDTO response = service.readById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TagResponseDTO>> readByNewsId(@RequestParam(name = "news_id") Long newsId) {
+        List<TagResponseDTO> tags = service.getTagsByNewsId(newsId);
+        return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
     @Override
-    public TagsResponseDTO create(TagsRequestDTO createRequest) throws ValidatorException, NotFoundException {
-        return service.create(createRequest);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<TagResponseDTO> create(@RequestBody TagRequestDTO createRequest) {
+        TagResponseDTO response = service.create(createRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Override
-    public TagsResponseDTO update(TagsRequestDTO updateRequest) throws ValidatorException, NotFoundException {
-        return service.update(updateRequest);
+    @PutMapping("/{id:\\d+}")
+    public ResponseEntity<TagResponseDTO> update(@PathVariable("id") Long id, @RequestBody TagRequestDTO updateRequest) {
+        TagResponseDTO response = service.update(updateRequest);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PatchMapping(path = "/{id:\\d+}", consumes = "application/json-patch+json")
+    public ResponseEntity<TagResponseDTO> updatePart(@PathVariable("id") Long id, @RequestBody JsonPatch patch) {
+        try {
+            TagResponseDTO tag = service.readById(id);
+            TagRequestDTO requestTag = new TagRequestDTO(tag.getId(), tag.getName());
+            TagRequestDTO patchedTag = applyPatchToTag(patch, requestTag);
+
+            return new ResponseEntity<>(service.update(patchedTag),HttpStatus.OK);
+        }
+        catch (JsonPatchException | JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
-    public boolean deleteById(Long id) throws NotFoundException {
-        return service.deleteById(id);
+    @DeleteMapping("/{id:\\d+}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable("id") Long id) {
+        service.deleteById(id);
+    }
+
+    private TagRequestDTO applyPatchToTag(JsonPatch patch, TagRequestDTO tag) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(tag, JsonNode.class));
+        return objectMapper.treeToValue(patched, TagRequestDTO.class);
     }
 }

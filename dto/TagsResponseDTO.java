@@ -1,10 +1,15 @@
 package com.mjc.school.service.dto;
 
-public class AuthorRequestDTO {
+public class TagsResponseDTO {
     private Long id;
     private String name;
 
-    public AuthorRequestDTO(Long id, String name) {
+    @Override
+    public String toString() {
+        return "TagsResponseDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     public Long getId() {

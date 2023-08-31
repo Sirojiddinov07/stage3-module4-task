@@ -1,14 +1,15 @@
 package com.mjc.school.service.dto;
 
-public class TagResponseDTO { private Long id;
+public class TagResponseDTO {
+    private Long id;
     private String name;
 
-    public TagResponseDTO(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public TagResponseDTO() {
+    @Override
+    public String toString() {
+        return "TagsResponseDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     public Long getId() {
@@ -25,13 +26,5 @@ public class TagResponseDTO { private Long id;
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "TagResponseDTO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

@@ -1,19 +1,21 @@
 package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.NewsRepository;
-import com.mjc.school.repository.model.Author;
-import com.mjc.school.repository.model.News;
-import com.mjc.school.repository.model.Tag;
+import com.mjc.school.repository.model.AuthorModel;
+import com.mjc.school.repository.model.NewsModel;
+import com.mjc.school.repository.model.TagModel;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.List;
 
-public class NewsImplement extends AbstractRepo<News, Long> implements NewsRepository {
+@Repository
+public class NewsRepoImpl extends AbstractRepo<NewsModel, Long> implements NewsRepository {
 
 
     @Override
-    protected void setFields(News oldModel, News newModel) {
+    protected void setFields(NewsModel oldModel, NewsModel newModel) {
         oldModel.setTitle(newModel.getTitle());
         oldModel.setContent(newModel.getContent());
         oldModel.setAuthor(newModel.getAuthor());
@@ -21,36 +23,36 @@ public class NewsImplement extends AbstractRepo<News, Long> implements NewsRepos
     }
 
 
-    public List<News> readByParams(Long tagId, String tagName, String authorName, String title, String content){
+    public List<NewsModel> readByParams(Long tagId, String tagName, String authorName, String title, String content){
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<News> cr = cb.createQuery(News.class);
-        Root<News> root = cr.from(News.class);
+        CriteriaQuery<NewsModel> cr = cb.createQuery(NewsModel.class);
+        Root<NewsModel> root = cr.from(NewsModel.class);
 
-        Join<News, Tag> tags = root.join("tags");
-        Join<News, Author> author = root.join("author");
+        Join<NewsModel, TagModel> tags = root.join("tags");
+        Join<NewsModel, AuthorModel> author = root.join("author");
 
         if (tagId != null){
             Predicate tagIdCheck = cb.equal(tags.get("id"), tagId);
             cr.select(root).where(tagIdCheck);
         }
-        if (tagName != null && !tagName.trim().isEmpty()){
+        if (tagName != null && !tagName.isBlank()){
             Predicate tagNameCheck = cb.equal(tags.get("name"), tagName);
             cr.select(root).where(tagNameCheck);
         }
-        if ((authorName != null) && !authorName.trim().isEmpty()){
+        if (authorName != null && !authorName.isBlank()){
             Predicate authorCheck = cb.equal(author.get("name"), authorName);
             cr.select(root).where(authorCheck);
         }
-        if (title != null && !title.trim().isEmpty()){
+        if (title != null && !title.isBlank()){
             Predicate titleCheck  = cb.equal(root.get("title"), title);
             cr.select(root).where(titleCheck);
         }
-        if (content != null && !content.trim().isEmpty()){
+        if (content != null && !content.isBlank()){
             Predicate contentCheck  = cb.equal(root.get("content"), content);
             cr.select(root).where(contentCheck);
         }
 
-        TypedQuery<News> query = entityManager.createQuery(cr);
+        TypedQuery<NewsModel> query = entityManager.createQuery(cr);
         return query.getResultList();
     }
 

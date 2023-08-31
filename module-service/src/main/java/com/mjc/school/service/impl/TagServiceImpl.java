@@ -1,7 +1,7 @@
 package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.TagRepository;
-import com.mjc.school.repository.model.Tag;
+import com.mjc.school.repository.model.TagModel;
 import com.mjc.school.service.TagService;
 import com.mjc.school.service.dto.TagRequestDTO;
 import com.mjc.school.service.dto.TagResponseDTO;
@@ -37,24 +37,24 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagResponseDTO readById(Long id) {
-        Tag model = tagRepo.readById(id).orElseThrow(() -> new NotFoundException(String.format(ErrorCodes.TAG_NOT_EXIST.getMessage(), id)));
+        TagModel model = tagRepo.readById(id).orElseThrow(() -> new NotFoundException(String.format(ErrorCodes.TAG_NOT_EXIST.getMessage(), id)));
         return mapper.modelToDTO(model);
     }
 
     @Override
     public TagResponseDTO create(TagRequestDTO createRequest) {
         validator.checkTagDto(createRequest);
-        Tag model = mapper.dtoToModel(createRequest);
+        TagModel model = mapper.dtoToModel(createRequest);
         tagRepo.create(model);
         return mapper.modelToDTO(model);
     }
 
     @Override
     public TagResponseDTO update(TagRequestDTO updateRequest) {
-        Tag model = mapper.dtoToModel(updateRequest);
+        TagModel model = mapper.dtoToModel(updateRequest);
         checkExist(model.getId());
         validator.checkTagDto(updateRequest);
-        Tag updatedModel = tagRepo.update(model);
+        TagModel updatedModel = tagRepo.update(model);
         return mapper.modelToDTO(updatedModel);
     }
 
@@ -73,7 +73,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagResponseDTO> getTagsByNewsId(Long newsId) {
         validator.validateNewsExist(newsId);
-        List<Tag> tags = tagRepo.getTagsByNewsId(newsId);
+        List<TagModel> tags = tagRepo.getTagsByNewsId(newsId);
         return mapper.modelListToDtoList(tags);
     }
 }

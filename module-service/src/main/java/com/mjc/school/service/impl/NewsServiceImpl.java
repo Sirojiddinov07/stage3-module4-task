@@ -2,8 +2,7 @@ package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.NewsRepository;
 import com.mjc.school.repository.TagRepository;
-import com.mjc.school.repository.model.News;
-import com.mjc.school.repository.model.Tag;
+import com.mjc.school.repository.model.NewsModel;
 import com.mjc.school.service.NewsService;
 import com.mjc.school.service.dto.NewsRequestDTO;
 import com.mjc.school.service.dto.NewsResponseDTO;
@@ -42,7 +41,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public NewsResponseDTO readById(Long id) {
         checkNewsExist(id);
-        News model = newsRepository.readById(id).get();
+        NewsModel model = newsRepository.readById(id).get();
         return newsMapper.modelToDTO(model);
     }
 
@@ -50,28 +49,28 @@ public class NewsServiceImpl implements NewsService {
     public NewsResponseDTO create(NewsRequestDTO createRequest) {
         validator.checkNewsDto(createRequest);
         Set<Long> tagIds = (Set<Long>) createRequest.getNewsTagsIds();
-        News model = newsMapper.dtoToModel(createRequest);
+        NewsModel model = newsMapper.dtoToModel(createRequest);
         for (Long id : tagIds){
             if (tagRepository.existById(id)){
-                model.setNewsTags((List<Tag>) tagRepository.readById(id).get());
+                model.addTag(tagRepository.readById(id).get());
             }
         }
-        News newModel = newsRepository.create(model);
+        NewsModel newModel = newsRepository.create(model);
         return newsMapper.modelToDTO(newModel);
     }
 
     @Override
     public NewsResponseDTO update(NewsRequestDTO updateRequest) {
         validator.checkNewsDto(updateRequest);
-        Set<Long> tagIds = updateRequest.setNewsTagsIds();
-        News model = newsMapper.dtoToModel(updateRequest);
+        Set<Long> tagIds = (Set<Long>) updateRequest.getNewsTagsIds();
+        NewsModel model = newsMapper.dtoToModel(updateRequest);
         checkNewsExist(model.getId());
         for (Long id : tagIds){
             if (tagRepository.existById(id)){
-                model.setTags((Set<Tag>) tagRepository.readById(id).get());
+                model.addTag(tagRepository.readById(id).get());
             }
         }
-        News updatedModel = newsRepository.update(model);
+        NewsModel updatedModel = newsRepository.update(model);
 
         return newsMapper.modelToDTO(updatedModel);
     }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "comment")
 @EntityListeners(AuditingEntityListener.class)
-public class Comments implements BaseEntity<Long> {
+public class CommentModel implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,17 +19,10 @@ public class Comments implements BaseEntity<Long> {
     @Column(nullable = false)
     private String content;
 
-    public Comments() {
-    }
-
-    public Comments(Long id, String content) {
-        this.id = id;
-        this.content = content;
-    }
+    public CommentModel(){}
 
 
-    public Comments(Long id, String content, LocalDateTime createDate,
-                    LocalDateTime lastUpdateDate, News news) {
+    public CommentModel(Long id, String content, LocalDateTime createDate, LocalDateTime lastUpdateDate, NewsModel news) {
         this.id = id;
         this.content = content;
         this.createDate = createDate;
@@ -46,7 +39,7 @@ public class Comments implements BaseEntity<Long> {
 
     @ManyToOne
     @JoinColumn(name = "news_id")
-    private News news;
+    private NewsModel news;
 
 
     @Override
@@ -83,12 +76,21 @@ public class Comments implements BaseEntity<Long> {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public News getNews() {
+    public NewsModel getNews() {
         return news;
     }
 
-    public void setNews(News news) {
+    public void setNews(NewsModel news) {
         this.news = news;
     }
+    @Override
+    public String toString() {
+        return "CommentModel{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", createDate=" + createDate +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", news=" + news +
+                '}';
+    }
 }
-

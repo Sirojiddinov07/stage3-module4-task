@@ -1,8 +1,8 @@
 package com.mjc.school.service.validator;
 
 import com.mjc.school.repository.BaseRepository;
-import com.mjc.school.repository.model.Author;
-import com.mjc.school.repository.model.News;
+import com.mjc.school.repository.model.AuthorModel;
+import com.mjc.school.repository.model.NewsModel;
 import com.mjc.school.service.dto.AuthorRequestDTO;
 import com.mjc.school.service.dto.CommentRequestDTO;
 import com.mjc.school.service.dto.NewsRequestDTO;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Validator {
 
-    private final BaseRepository<Author, Long> authorRepo;
-    private final BaseRepository<News, Long> newsRepo;
+    private final BaseRepository<AuthorModel, Long> authorRepo;
+    private final BaseRepository<NewsModel, Long> newsRepo;
 
     private static final int TITLE_MAX_LENGTH = 30;
     private static final int TITLE_MIN_LENGTH = 5;
@@ -27,15 +27,15 @@ public class Validator {
     private static final int TAG_MIN_LENGTH = 3;
     private static final int TAG_MAX_LENGTH = 15;
 
-    public Validator(BaseRepository<Author, Long> authorRepo,
-    BaseRepository<News, Long> newsRepo) {
+    public Validator(BaseRepository<AuthorModel, Long> authorRepo, 
+    BaseRepository<NewsModel, Long> newsRepo) {
         this.authorRepo = authorRepo;
         this.newsRepo = newsRepo;
     }
 
     public void checkNewsDto(NewsRequestDTO dto){
 
-        validateLength(dto.getTitle(), TITLE_MIN_LENGTH, TITLE_MAX_LENGTH, "CHECK_TITLE_LENGTH");
+        validateLength(dto.getContent(), TITLE_MIN_LENGTH, TITLE_MAX_LENGTH, "CHECK_TITLE_LENGTH");
         validateLength(dto.getContent(), CONTENT_MIN_LENGTH, CONTENT_MAX_LENGTH, "CHECK_CONTENT_LENGTH");
         long authorId = dto.getAuthorId();
         if (!authorRepo.existById(authorId)){

@@ -28,8 +28,8 @@ public enum Operations {
     private final int operationNumber;
     private final String operation;
 
-    Operations(int operationNumber, String operation) {
-        this.operationNumber = operationNumber;
+    Operations(int i, String operation) {
+        this.operationNumber = i;
         this.operation = operation;
     }
 
@@ -41,5 +41,3 @@ public enum Operations {
         return operationNumber + ". " +operation;
     }
 }
-
-

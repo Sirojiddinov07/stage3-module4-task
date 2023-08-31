@@ -1,15 +1,9 @@
 package com.mjc.school.service.dto;
-
-public class TagRequestDTO{
+public class TagRequestDTO {
     private Long id;
     private String name;
 
     public TagRequestDTO(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public TagRequestDTO() {
     }
 
     public Long getId() {

@@ -1,7 +1,7 @@
 package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.model.Author;
+import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.dto.AuthorRequestDTO;
 import com.mjc.school.service.dto.AuthorResponseDTO;
@@ -36,24 +36,24 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorResponseDTO readById(Long id) {
-        Author dto = authorRepo.readById(id).orElseThrow(() -> new NotFoundException(String.format(ErrorCodes.AUTHOR_NOT_EXIST.getMessage(), id)));
+        AuthorModel dto = authorRepo.readById(id).orElseThrow(() -> new NotFoundException(String.format(ErrorCodes.AUTHOR_NOT_EXIST.getMessage(), id)));
         return mapper.modelToDTO(dto);
     }
 
     @Override
     public AuthorResponseDTO create(AuthorRequestDTO createRequest) {
         validator.checkAuthorDto(createRequest);
-        Author model = mapper.dtoToModel(createRequest);
-        Author newModel = authorRepo.create(model);
+        AuthorModel model = mapper.dtoToModel(createRequest);
+        AuthorModel newModel = authorRepo.create(model);
         return mapper.modelToDTO(newModel);
     }
 
     @Override
     public AuthorResponseDTO update(AuthorRequestDTO updateRequest) {
         validator.checkAuthorDto(updateRequest);
-        Author model = mapper.dtoToModel(updateRequest);
+        AuthorModel model = mapper.dtoToModel(updateRequest);
         readById(model.getId());
-        Author updatedModel = authorRepo.update(model);
+        AuthorModel updatedModel = authorRepo.update(model);
         return mapper.modelToDTO(updatedModel);
     }
 
@@ -66,7 +66,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     public AuthorResponseDTO getAuthorByNewsId(Long newsId){
         validator.validateNewsExist(newsId);
-        Author author = authorRepo.getAuthorByNewsId(newsId);
+        AuthorModel author = authorRepo.getAuthorByNewsId(newsId);
         return mapper.modelToDTO(author);
     }
 

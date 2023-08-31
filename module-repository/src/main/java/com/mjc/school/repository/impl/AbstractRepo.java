@@ -2,7 +2,6 @@ package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.BaseRepository;
 import com.mjc.school.repository.model.BaseEntity;
-import com.mjc.school.repository.model.News;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,7 +27,7 @@ public abstract class AbstractRepo<T extends BaseEntity<K>, K> implements BaseRe
     protected abstract void setFields(T oldModel, T newModel);
 
     @Override
-    public List<News> readAll(int page, int limit, String sortBy) {
+    public List<T> readAll(int page, int limit, String sortBy) {
         int offset = page * limit;
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> cr = cb.createQuery(entityClass);
